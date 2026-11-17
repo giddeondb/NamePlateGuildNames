@@ -6,7 +6,7 @@
 ## X-License: BSD-3-Clause
 ## X-Curse-Project-ID: 1812902
 ## X-Website: https://github.com/giddeondb/NamePlateGuildNames
-## Version: 0.2.2
+## Version: 0.3.0
 ## SavedVariables: NamePlateGuildNamesDB
 
 NamePlateGuildNames.lua

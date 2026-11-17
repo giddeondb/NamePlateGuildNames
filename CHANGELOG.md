@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Automate releases and add gear icon and square logo
+
 ## 0.2.2
 
 - Add CurseForge packaging for project 1812902.
