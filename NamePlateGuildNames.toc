@@ -1,7 +1,10 @@
 ## Interface: 16001
 ## Title: NamePlateGuildNames
 ## Notes: Adds guild names to accessible player nameplates. /ngn
-## Version: 0.2.0
+## Author: GiddeonDB
+## X-License: BSD-3-Clause
+## X-Website: https://github.com/giddeondb/NamePlateGuildNames
+## Version: 0.2.1
 ## SavedVariables: NamePlateGuildNamesDB
 
 NamePlateGuildNames.lua

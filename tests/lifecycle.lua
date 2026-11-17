@@ -4,8 +4,22 @@ local plates, units, messages = {}, {}, {}
 local function region()
     local r = {visible=false}
     function r:IsForbidden() return self.forbidden or false end
-    function r:Hide() self.visible=false end
-    function r:Show() self.visible=true end
+    function r:HookScript(event, callback)
+        self.hooks = self.hooks or {}
+        self.hooks[event] = self.hooks[event] or {}
+        table.insert(self.hooks[event], callback)
+    end
+    function r:IsVisible() return self.visible end
+    function r:Hide()
+        local changed = self.visible
+        self.visible=false
+        if changed then for _, f in ipairs(self.hooks and self.hooks.OnHide or {}) do f(self) end end
+    end
+    function r:Show()
+        local changed = not self.visible
+        self.visible=true
+        if changed then for _, f in ipairs(self.hooks and self.hooks.OnShow or {}) do f(self) end end
+    end
     function r:SetText(s) self.text=s end
     function r:ClearAllPoints() end
     function r:SetPoint(...) self.point={...} end
@@ -44,6 +58,8 @@ local function add(u, guild, p)
     p.unitToken=u
     p.UnitFrame=region()
     p.UnitFrame.HealthBarsContainer=region()
+    p.UnitFrame.CastBarsContainer=region()
+    p.UnitFrame.CastBarsContainer.castBar=region()
     function p:CreateFontString() self.label=region(); return self.label end
     plates[u]=p
     handler(nil,'NAME_PLATE_UNIT_ADDED',u)
@@ -51,13 +67,30 @@ local function add(u, guild, p)
 end
 local p=add('nameplate1','Slash Played')
 assert(p.label.visible and p.label.text=='<Slash Played>', 'untargeted label')
+local castContainer = p.UnitFrame.CastBarsContainer
+local castBar = castContainer.castBar
+assert(p.label.point[2]==p.UnitFrame.HealthBarsContainer, 'idle anchor')
+castBar:Show()
+assert(p.label.point[2]==castContainer, 'cast anchors below bar and spell text')
+castBar:Hide()
+assert(p.label.point[2]==p.UnitFrame.HealthBarsContainer, 'cast end restores anchor')
+castBar:Show()
+SlashCmdList.NAMEPLATEGUILDNAMES('refresh')
+assert(p.label.point[2]==castContainer, 'already casting on refresh')
+assert(#castBar.hooks.OnShow==1, 'refresh does not duplicate hooks')
 handler(nil,'NAME_PLATE_UNIT_REMOVED','nameplate1')
+castBar:Hide()
+castBar:Show()
+assert(not p.label.visible, 'removed cast callbacks cannot show stale label')
 plates.nameplate1=nil; units.nameplate1=nil
 assert(not p.label.visible and p.label.text=='', 'remove clears label')
 add('nameplate2',nil,p)
 assert(not p.label.visible, 'recycled guildless plate stays blank')
 units.nameplate2.guild='Late Guild'; tick()
 assert(p.label.visible and p.label.text=='<Late Guild>', 'late guild retry')
+local currentAnchor = p.label.point[2]
+castBar:Hide()
+assert(p.label.point[2]==currentAnchor, 'old pooled frame cannot reposition new label')
 SlashCmdList.NAMEPLATEGUILDNAMES('off')
 assert(not p.label.visible, 'disable hides')
 SlashCmdList.NAMEPLATEGUILDNAMES('on')
@@ -99,4 +132,4 @@ handler(nil,'UNIT_NAME_UPDATE','nameplate5')
 assert(not delayed.label.visible, 'API error hides old text')
 SlashCmdList.NAMEPLATEGUILDNAMES('status')
 assert(table.concat(messages,'\n'):find('mock restricted API',1,true), 'error diagnosis')
-io.write('PASS: untargeted label, removal, reuse, delayed data, toggle, offset, hostility, forbidden/secret data, bounded retries, refresh, API errors\n')
+io.write('PASS: untargeted label, removal, reuse, delayed data, toggle, offset, hostility, forbidden/secret data, bounded retries, refresh, API errors, cast start/stop, active cast refresh, stale hooks\n')

@@ -1,6 +1,7 @@
 local addonName = ...
 local events = CreateFrame("Frame")
 local active, labels = {}, {}
+local castOwners, hookedCasts = {}, {}
 local db
 local failures, lastError = 0, nil
 local MAX_ATTEMPTS = 8
@@ -17,7 +18,43 @@ local function Accessible(frame)
     return frame and not frame:IsForbidden()
 end
 
+local function Position(state)
+    local anchor = state.healthAnchor
+    if Accessible(state.castContainer) and Accessible(state.castBar) then
+        local visible = state.castBar:IsVisible()
+        if not Plain(visible) then return end
+        if visible then anchor = state.castContainer end
+    end
+    state.label:ClearAllPoints()
+    state.label:SetPoint("TOP", anchor, "BOTTOM", 0, db.offset)
+end
+
+local function CastVisibilityChanged(frame)
+    local state = castOwners[frame]
+    if not state or not state.shown then return end
+    local ok, err = pcall(Position, state)
+    if not ok then
+        failures = failures + 1
+        lastError = Plain(err) and tostring(err) or "restricted layout error"
+        -- Stop repeated callbacks until this plate is refreshed.
+        castOwners[frame] = nil
+    end
+end
+
+local function WatchCast(frame, state)
+    if not Accessible(frame) then return end
+    if not hookedCasts[frame] then
+        frame:HookScript("OnShow", CastVisibilityChanged)
+        frame:HookScript("OnHide", CastVisibilityChanged)
+        hookedCasts[frame] = true
+    end
+    castOwners[frame] = state
+end
+
 local function Hide(state)
+    -- Pooled cast frames must never keep a removed player's label alive.
+    if state.castBar and castOwners[state.castBar] == state then castOwners[state.castBar] = nil end
+    if state.castContainer and castOwners[state.castContainer] == state then castOwners[state.castContainer] = nil end
     if state.label and Accessible(state.label) then
         state.label:Hide()
         state.label:SetText("")
@@ -63,8 +100,17 @@ local function Update(unit, state)
         labels[plate] = label
     end
     state.label = label
-    label:ClearAllPoints()
-    label:SetPoint("TOP", anchor, "BOTTOM", 0, db.offset)
+    state.healthAnchor = anchor
+    state.castContainer, state.castBar = nil, nil
+    if Accessible(plate.UnitFrame) then
+        local container = plate.UnitFrame.CastBarsContainer
+        if Accessible(container) and Accessible(container.castBar) then
+            state.castContainer, state.castBar = container, container.castBar
+            WatchCast(container, state)
+            WatchCast(container.castBar, state)
+        end
+    end
+    Position(state)
     label:SetFont(STANDARD_TEXT_FONT, db.size, "OUTLINE")
     if friendly then
         label:SetTextColor(0.65, 0.65, 1)
@@ -125,7 +171,7 @@ local function Status()
         reasons[reason] = (reasons[reason] or 0) + 1
     end
     local version, build = GetBuildInfo()
-    Say(string.format("v0.2.0; client %s/%s; %s; %d tracked, %d labels, %d errors.",
+    Say(string.format("v0.2.1; client %s/%s; %s; %d tracked, %d labels, %d errors.",
         version, build, db.enabled and "on" or "off", count, shown, failures))
     local parts = {}
     for reason, n in pairs(reasons) do parts[#parts + 1] = reason .. "=" .. n end
@@ -142,7 +188,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         if type(db.enabled) ~= "boolean" then db.enabled = true end
         db.size = math.max(8, math.min(24, tonumber(db.size) or 12))
         db.offset = math.max(-60, math.min(60, tonumber(db.offset) or -4))
-        Say("v0.2.0 loaded. /ngn status for diagnostics; /ngn for controls.")
+        Say("v0.2.1 loaded. /ngn status for diagnostics; /ngn for controls.")
     elseif not db then
         return
     elseif event == "NAME_PLATE_UNIT_ADDED" then
