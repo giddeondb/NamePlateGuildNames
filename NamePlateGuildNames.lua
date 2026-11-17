@@ -1,4 +1,5 @@
 local addonName = ...
+local addonVersion = C_AddOns.GetAddOnMetadata(addonName, "Version") or "unknown"
 local events = CreateFrame("Frame")
 local active, labels = {}, {}
 local castOwners, hookedCasts = {}, {}
@@ -171,8 +172,8 @@ local function Status()
         reasons[reason] = (reasons[reason] or 0) + 1
     end
     local version, build = GetBuildInfo()
-    Say(string.format("v0.2.2; client %s/%s; %s; %d tracked, %d labels, %d errors.",
-        version, build, db.enabled and "on" or "off", count, shown, failures))
+    Say(string.format("v%s; client %s/%s; %s; %d tracked, %d labels, %d errors.",
+        addonVersion, version, build, db.enabled and "on" or "off", count, shown, failures))
     local parts = {}
     for reason, n in pairs(reasons) do parts[#parts + 1] = reason .. "=" .. n end
     table.sort(parts)
@@ -188,7 +189,7 @@ events:SetScript("OnEvent", function(_, event, unit)
         if type(db.enabled) ~= "boolean" then db.enabled = true end
         db.size = math.max(8, math.min(24, tonumber(db.size) or 12))
         db.offset = math.max(-60, math.min(60, tonumber(db.offset) or -4))
-        Say("v0.2.2 loaded. /ngn status for diagnostics; /ngn for controls.")
+        Say("v" .. addonVersion .. " loaded. /ngn status for diagnostics; /ngn for controls.")
     elseif not db then
         return
     elseif event == "NAME_PLATE_UNIT_ADDED" then

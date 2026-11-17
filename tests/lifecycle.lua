@@ -48,10 +48,15 @@ C_NamePlate = {
  GetNamePlates=function() local out={} for _, p in pairs(plates) do out[#out+1]=p end return out end,
 }
 C_Timer={NewTicker=function(_, f) tick=f end}
+C_AddOns={GetAddOnMetadata=function(name, key)
+    assert(name=='NamePlateGuildNames' and key=='Version')
+    return '9.8.7'
+end}
 SlashCmdList={}
 STANDARD_TEXT_FONT='font'
 assert(loadfile(path))('NamePlateGuildNames')
 handler(nil,'ADDON_LOADED','NamePlateGuildNames')
+assert(messages[#messages]:find('v9.8.7 loaded',1,true), 'load message uses TOC version')
 local function add(u, guild, p)
     units[u]={player=true, friendly=true, guild=guild}
     p=p or region()
@@ -132,4 +137,5 @@ handler(nil,'UNIT_NAME_UPDATE','nameplate5')
 assert(not delayed.label.visible, 'API error hides old text')
 SlashCmdList.NAMEPLATEGUILDNAMES('status')
 assert(table.concat(messages,'\n'):find('mock restricted API',1,true), 'error diagnosis')
+assert(table.concat(messages,'\n'):find('v9.8.7; client',1,true), 'status uses TOC version')
 io.write('PASS: untargeted label, removal, reuse, delayed data, toggle, offset, hostility, forbidden/secret data, bounded retries, refresh, API errors, cast start/stop, active cast refresh, stale hooks\n')

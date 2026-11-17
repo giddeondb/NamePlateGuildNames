@@ -1,5 +1,6 @@
 ## Interface: 16001
 ## Title: NamePlateGuildNames
+## IconTexture: Interface\Icons\INV_Misc_Gear_01
 ## Notes: Adds guild names to accessible player nameplates. /ngn
 ## Author: GiddeonDB
 ## X-License: BSD-3-Clause

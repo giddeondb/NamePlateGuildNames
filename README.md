@@ -1,4 +1,4 @@
-# NamePlateGuildNames
+# NamePlateGuildNames <img align="right" src="https://raw.githubusercontent.com/giddeondb/NamePlateGuildNames/main/docs/images/logo-curseforge.png" alt="NamePlateGuildNames logo" width="160">
 
 Show player guild names while keeping nameplates enabled in **WoW Forever**.
 
@@ -66,7 +66,7 @@ luac5.1 -p NamePlateGuildNames.lua
 
 The mocked tests cover guild data retries, player filtering, colors, recycled plates, restricted data, cast-bar transitions, and stale callbacks. They do not verify live rendering. In-game checks should include fishing, interrupted casts, untargeted players, combat, range changes, and dungeon transitions.
 
-Build an installable ZIP with `python3 tools/package.py`. It writes `dist/NamePlateGuildNames.zip` and a versioned copy. Only addon files, README, changelog, and license are packaged; screenshots and tests remain in the repository. Releases are published on GitHub. CurseForge packaging targets project 1812902 through a GitHub webhook. See [PUBLISHING.md](PUBLISHING.md) for release steps and verification.
+Build an installable ZIP with `python3 tools/package.py`. It writes `dist/NamePlateGuildNames.zip` and a versioned copy. Only addon files, README, changelog, and license are packaged; screenshots and tests remain in the repository. Each new commit pushed to `main` automatically runs checks, assigns the next minor version, and publishes versioned and stable-name ZIPs on GitHub. Commits marked `[skip ci]` or `[ci skip]` are excluded, including on later catch-up runs. Release tags also notify the CurseForge packager for project 1812902. See [PUBLISHING.md](https://github.com/giddeondb/NamePlateGuildNames/blob/main/PUBLISHING.md) for recovery and verification.
 
 ## Author and license
 
