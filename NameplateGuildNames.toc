@@ -1,0 +1,7 @@
+## Interface: 16001
+## Title: NameplateGuildNames
+## Notes: Adds guild names to accessible player nameplates. /ngn
+## Version: 0.2.0
+## SavedVariables: NameplateGuildNamesDB
+
+NameplateGuildNames.lua
