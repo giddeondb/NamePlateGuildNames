@@ -6,7 +6,7 @@ local failures, lastError = 0, nil
 local MAX_ATTEMPTS = 8
 
 local function Say(message)
-    print("|cff88ccffNameplateGuildNames:|r " .. message)
+    print("|cff88ccffNamePlateGuildNames:|r " .. message)
 end
 
 local function Plain(value)
@@ -137,8 +137,8 @@ end
 events:SetScript("OnEvent", function(_, event, unit)
     if event == "ADDON_LOADED" then
         if unit ~= addonName then return end
-        NameplateGuildNamesDB = type(NameplateGuildNamesDB) == "table" and NameplateGuildNamesDB or {}
-        db = NameplateGuildNamesDB
+        NamePlateGuildNamesDB = type(NamePlateGuildNamesDB) == "table" and NamePlateGuildNamesDB or {}
+        db = NamePlateGuildNamesDB
         if type(db.enabled) ~= "boolean" then db.enabled = true end
         db.size = math.max(8, math.min(24, tonumber(db.size) or 12))
         db.offset = math.max(-60, math.min(60, tonumber(db.offset) or -4))

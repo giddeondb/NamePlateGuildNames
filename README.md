@@ -1,4 +1,4 @@
-# NameplateGuildNames
+# NamePlateGuildNames
 
 Prototype 0.2.0 for WoW Forever interface 16001, developed against reported client 1.60.1 build 70938.
 
@@ -6,7 +6,7 @@ Adds guild labels under accessible player health bars: lavender for friendly pla
 
 ## Load and edit
 
-This folder is the live addon source. Try `/reload` after installation. If the new addon is not discovered, restart the client once and enable NameplateGuildNames in the AddOns list. Subsequent Lua edits use `/reload`.
+This folder is the live addon source. Try `/reload` after installation. If the new addon is not discovered, restart the client once and enable NamePlateGuildNames in the AddOns list. Subsequent Lua edits use `/reload`.
 
 - `/ngn status`: concise client, plate, label, and error summary.
 - `/ngn refresh`: retry currently accessible plates and show status.
@@ -14,7 +14,7 @@ This folder is the live addon source. Try `/reload` after installation. If the n
 - `/ngn size 12`: font size from 8 to 24.
 - `/ngn offset -4`: vertical offset from -60 to 60; negative moves down.
 
-Settings persist in NameplateGuildNamesDB. The addon does not change game CVars or other addons.
+Settings persist in NamePlateGuildNamesDB. The addon does not change game CVars or other addons.
 
 ## Limitations and verification
 
@@ -23,3 +23,7 @@ Forbidden nameplates are skipped. Dungeon/raid support and guild queries for unt
 Test with a nearby guilded friendly player without targeting them, then target and untarget them. Check guildless players, enemy players, NPCs, pets, range changes, combat, reload, and dungeon transitions. Friendly-to-hostile changes should recolor the label. Check long names and cast bars for overlap. Other nameplate replacements are outside the initial scope.
 
 Expected: accurate guild labels, no label on NPCs/pets/guildless players, no stale guild after a plate is reused, and no errors. `/ngn status` reports caught API errors rather than repeating them in chat.
+
+## Local checks
+
+From this repository, run `lua5.1 tests/lifecycle.lua NamePlateGuildNames.lua`. The mock tests cover label reuse, delayed guild data, friendly/enemy colors, restricted data, and error reporting. They do not replace in-game verification.
