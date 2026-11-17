@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+- Add CurseForge packaging for project 1812902.
+- Provide description screenshots resized below 850 pixels.
+- No gameplay behavior changes.
+
 ## 0.2.1
 
 - Move guild labels below visible cast bars and spell text, returning below the health bar when casting ends.

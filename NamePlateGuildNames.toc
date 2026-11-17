@@ -3,8 +3,9 @@
 ## Notes: Adds guild names to accessible player nameplates. /ngn
 ## Author: GiddeonDB
 ## X-License: BSD-3-Clause
+## X-Curse-Project-ID: 1812902
 ## X-Website: https://github.com/giddeondb/NamePlateGuildNames
-## Version: 0.2.1
+## Version: 0.2.2
 ## SavedVariables: NamePlateGuildNamesDB
 
 NamePlateGuildNames.lua
